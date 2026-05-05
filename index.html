@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chill Click Ball</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app" aria-labelledby="app-title">
+    <section class="app__playground" aria-label="Relaxation playground">
+      <button
+        class="ball"
+        id="stress-ball"
+        type="button"
+        aria-label="Stress ball. Press or hit Enter/Space repeatedly."
+      >
+        <canvas
+          id="blob-canvas"
+          class="blob-canvas"
+          aria-hidden="true"
+        ></canvas>
+      </button>
+      <div class="floating-layer" id="floating-layer" aria-hidden="true"></div>
+    </section>
+
+    <section class="app__controls" aria-label="Encouragement">
+      <div class="quote-box" id="quote-box" aria-live="polite"></div>
+      <button class="btn" id="quote-button" type="button">
+        Give me a gentle thought
+      </button>
+    </section>
+
+  </main>
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
