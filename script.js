@@ -157,10 +157,10 @@ function initThreeBlob() {
 
   blobMaterial = new THREE.MeshStandardMaterial({
     color: 0x8b5cf6,
-    emissive: 0x4c1d95,
-    emissiveIntensity: 1.2,
-    roughness: 0.3,
-    metalness: 0.2,
+    emissive: 0x2e1065,
+    emissiveIntensity: 0.6,
+    roughness: 0.8,
+    metalness: 0.0,
   });
 
   sphere = new THREE.Mesh(geometry, blobMaterial);
@@ -169,7 +169,7 @@ function initThreeBlob() {
   const wireMaterial = new THREE.MeshBasicMaterial({
     color: 0xc4b5fd,
     wireframe: true,
-    opacity: 0.12,
+    opacity: 0.08,
     transparent: true,
   });
 
@@ -207,9 +207,9 @@ function updateThreeBlob(dt) {
     const light = 0.45 + 0.1 * Math.sin(time * 0.25 + 2.4);
     blobMaterial.color.setHSL(hue, sat, light);
     
-    // Emissive color follows but stays more saturated and vibrant
-    blobMaterial.emissive.setHSL(hue, 0.9, 0.5);
-    blobMaterial.emissiveIntensity = 0.8 + 0.5 * Math.sin(time * 0.5); // Pulsing glow
+    // Emissive color follows but stays more saturated
+    blobMaterial.emissive.setHSL(hue, 0.8, 0.4);
+    blobMaterial.emissiveIntensity = 0.4 + 0.2 * Math.sin(time * 0.4); // Softer pulse
   }
 
   if (!isDragging) {
@@ -249,7 +249,7 @@ function updateThreeBlob(dt) {
       }
     }
 
-    const radius = baseRadius + idle * 0.12 + ripple * 0.22;
+    const radius = baseRadius + idle * 0.12 + ripple * 0.12;
 
     vertex.copy(normal.multiplyScalar(radius));
     positionAttr.setXYZ(i, vertex.x, vertex.y, vertex.z);
