@@ -11,54 +11,152 @@ body {
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, #1e293b, #020617 55%, #000);
+  background: radial-gradient(circle at 50% 30%, #171235, #0a0a1f 55%, #030308);
   color: #f7f7ff;
   margin: 0;
   min-height: 100vh;
+  overflow: hidden;
 }
 
+/* --- Drifting aurora background --- */
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  filter: blur(60px) saturate(1.3);
+}
+
+.aurora__blob {
+  position: absolute;
+  display: block;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.aurora__blob--1 {
+  top: -20vmax;
+  left: -15vmax;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.9), transparent 65%);
+  animation: drift-1 26s ease-in-out infinite;
+}
+
+.aurora__blob--2 {
+  bottom: -25vmax;
+  right: -20vmax;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.75), transparent 65%);
+  animation: drift-2 32s ease-in-out infinite;
+}
+
+.aurora__blob--3 {
+  top: 25%;
+  right: 5%;
+  width: 45vmax;
+  height: 45vmax;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.6), transparent 65%);
+  animation: drift-3 38s ease-in-out infinite;
+}
+
+@keyframes drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12vmax, 8vmax) scale(1.15); }
+}
+
+@keyframes drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-10vmax, -6vmax) scale(0.9); }
+}
+
+@keyframes drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(0.95); }
+  50% { transform: translate(-8vmax, 10vmax) scale(1.2); }
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 42%, transparent 40%, rgba(3, 3, 8, 0.55) 100%);
+}
+
+/* --- Layout --- */
+
 .app {
+  position: relative;
+  z-index: 2;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr auto;
   align-items: center;
   justify-items: center;
-  padding: 1.5rem 1rem 12vh; /* Increased bottom padding to push controls up */
-  row-gap: 2rem;
+  padding: 3.5vh 1rem 12vh;
+  row-gap: 1.5rem;
+}
+
+.app__title {
+  margin: 0;
+  font-size: clamp(1.1rem, 3.5vw, 1.7rem);
+  font-weight: 300;
+  letter-spacing: 0.5em;
+  text-transform: lowercase;
+  color: rgba(226, 232, 255, 0.55);
+  text-indent: 0.5em;
+  animation: title-breathe 7s ease-in-out infinite;
+}
+
+@keyframes title-breathe {
+  0%, 100% { opacity: 0.45; letter-spacing: 0.5em; }
+  50% { opacity: 0.8; letter-spacing: 0.62em; }
 }
 
 .app__playground {
   position: relative;
   width: 100%;
   height: 100%;
-  max-height: 60vh; /* Constrain playground to give more room for quotes */
+  max-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .floating-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  overflow: visible;
 }
 
 .ball {
   position: relative;
   z-index: 2;
-  width: min(60vmin, 420px);
-  height: min(60vmin, 420px);
-  border-radius: 999px;
+  width: min(62vmin, 440px);
+  height: min(62vmin, 440px);
+  border-radius: 50%;
   border: none;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  cursor: grab;
   background: transparent;
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-  transition: box-shadow 120ms ease-out, filter 120ms ease-out;
+  transition: transform 140ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ball:active {
+  cursor: grabbing;
+}
+
+.ball.is-pressed {
+  transform: scale(0.94);
 }
 
 .blob-canvas {
@@ -66,82 +164,85 @@ body {
   height: 100%;
   display: block;
   filter:
-    drop-shadow(0 0 26px rgba(129, 140, 248, 0.7))
-    drop-shadow(0 0 48px rgba(59, 130, 246, 0.4));
+    drop-shadow(0 0 30px rgba(124, 58, 237, 0.65))
+    drop-shadow(0 0 60px rgba(34, 211, 238, 0.4))
+    drop-shadow(0 0 120px rgba(244, 114, 182, 0.25));
 }
 
 .ball:focus-visible {
-  outline: 3px solid #a5b4fc;
-  outline-offset: 4px;
+  outline: none;
 }
 
-.ball:active {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.75);
-  filter: brightness(1.1);
+.ball:focus-visible .blob-canvas {
+  filter:
+    drop-shadow(0 0 0 3px rgba(165, 180, 252, 0.9))
+    drop-shadow(0 0 30px rgba(124, 58, 237, 0.7))
+    drop-shadow(0 0 60px rgba(34, 211, 238, 0.45));
 }
+
+/* --- Controls (glassmorphism) --- */
 
 .app__controls {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.6rem;
+  gap: 1rem;
   max-width: 40rem;
+  width: 100%;
 }
 
 .quote-box {
-  min-height: 2.6rem;
-  padding: 0.8rem 1.1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(248, 250, 252, 0.75);
-  background: rgba(15, 23, 42, 0.9);
-  color: #e5e7eb;
-  font-size: 1.06rem;
-  line-height: 1.5;
+  min-height: 3rem;
+  padding: 1.1rem 1.4rem;
+  border-radius: 20px;
+  border: 1px solid rgba(196, 181, 253, 0.22);
+  background: rgba(20, 18, 45, 0.45);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: #eef2ff;
+  font-size: clamp(1rem, 2.6vw, 1.18rem);
+  font-weight: 300;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: opacity 420ms ease, transform 420ms ease;
 }
 
-.btn {
-  padding: 0.55rem 1.1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(191, 219, 254, 0.75);
-  background: rgba(37, 99, 235, 0.95);
-  color: #f9fafb;
-  cursor: pointer;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
-  transition: background 120ms ease-out, transform 90ms ease-out, box-shadow 120ms ease-out;
+.quote-box.is-swapping {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
-.btn:hover {
-  background: rgba(59, 130, 246, 0.98);
+.hint {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: lowercase;
+  text-indent: 0.28em;
+  color: rgba(196, 181, 253, 0.55);
+  animation: hint-breathe 4.5s ease-in-out infinite;
 }
 
-.btn:active {
-  transform: translateY(1px) scale(0.98);
-  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.9);
+@keyframes hint-breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
 }
 
-.btn:focus-visible {
-  outline: 2px solid #fee2e2;
-  outline-offset: 2px;
-}
-
+/* --- Floating emoji burst --- */
 
 .floating-emoji {
   position: absolute;
   font-size: min(9vmin, 4.2rem);
   pointer-events: none;
-  filter: drop-shadow(0 0 12px rgba(15, 23, 42, 0.9));
-  animation: float-burst 5s ease-out forwards;
+  filter: drop-shadow(0 0 14px rgba(124, 58, 237, 0.6));
+  animation: float-burst 5s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
 }
 
 @keyframes float-burst {
   0% {
-    transform: translate3d(0, 0, 0) scale(0.4) rotate(0deg);
+    transform: translate3d(0, 0, 0) scale(0.3) rotate(0deg);
     opacity: 0;
   }
   12% {
@@ -172,7 +273,6 @@ body {
   *,
   *::before,
   *::after {
-    scroll-behavior: auto !important;
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -185,6 +285,6 @@ body {
 
 @media (max-width: 480px) {
   .app {
-    padding: 1.25rem 0.75rem 1.4rem;
+    padding: 2.5vh 0.75rem 6vh;
   }
 }

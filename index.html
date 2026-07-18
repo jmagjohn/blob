@@ -7,7 +7,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--1"></span>
+    <span class="aurora__blob aurora__blob--2"></span>
+    <span class="aurora__blob aurora__blob--3"></span>
+  </div>
+  <div class="vignette" aria-hidden="true"></div>
+
   <main class="app" aria-labelledby="app-title">
+    <h1 id="app-title" class="app__title">breathe</h1>
+
     <section class="app__playground" aria-label="Relaxation playground">
       <button
         class="ball"
@@ -26,9 +35,7 @@
 
     <section class="app__controls" aria-label="Encouragement">
       <div class="quote-box" id="quote-box" aria-live="polite"></div>
-      <button class="btn" id="quote-button" type="button">
-        Give me a gentle thought
-      </button>
+      <p class="hint">tap the blob</p>
     </section>
 
   </main>
